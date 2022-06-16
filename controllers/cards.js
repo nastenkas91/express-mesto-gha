@@ -18,7 +18,7 @@ module.exports.createCard = (req, res) => {
     { name, link, owner: req.user._id },
     { new: true, runValidators: true },
   )
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.send({ cardId }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные в полях: ${Object.keys(err.errors)}` });
@@ -62,11 +62,11 @@ module.exports.addLike = (req, res) => {
       if (!card) {
         res.status(NOT_FOUND).send({ message: `Карточка по указанному id не найдена` });
       }
-      res.send({ card });
+      res.send({ cardId });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND).send({ message: `Карточка по указанному id не найдена` });
+        res.status(BAD_REQUEST).send({ message: `Карточка по указанному id не найдена` });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
       }
@@ -89,7 +89,7 @@ module.exports.removeLike = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND).send({ message: `Карточка по указанному id не найдена` });
+        res.status(BAD_REQUEST).send({ message: `Карточка по указанному id не найдена` });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
       }
