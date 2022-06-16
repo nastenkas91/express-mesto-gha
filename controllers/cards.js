@@ -16,9 +16,8 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create(
     { name, link, owner: req.user._id },
-    { new: true, runValidators: true },
   )
-    .then((card) => res.send({ cardId }))
+    .then((card) => res.send({ card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: `Переданы некорректные данные в полях: ${Object.keys(err.errors)}` });
@@ -43,7 +42,7 @@ module.exports.deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NOT_FOUND).send({ message: `Карточка по указанному id не найдена` });
+        res.status(BAD_REQUEST).send({ message: `Карточка по указанному id не найдена` });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка на сервере' });
       }
