@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-require('dotenv').config();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const { celebrate, Joi, errors } = require('celebrate');
@@ -19,7 +18,7 @@ mongoose.connect("mongodb://localhost:27017/mestodb");
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
+    name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(/^(https?:\/\/(www\.)?([a-zA-z0-9-]){1,}\.?([a-zA-z0-9]){2,8}(\/?([a-zA-z0-9-])*\/?)*\/?([-._~:/?#[]@!\$&'\(\)\*\+,;=])*)/),
     email: Joi.string().required().email(),
