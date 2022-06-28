@@ -7,7 +7,7 @@ const AuthorisationError = require("../errors/AuthorisationError");
 const Conflict = require("../errors/Conflict");
 const ValidationError = require("../errors/ValidationError");
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+// const { NODE_ENV, JWT_SECRET } = process.env;
 
 // Поиск всех пользователей
 module.exports.getUsers = (req, res, next) => {
@@ -121,8 +121,7 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (!matched) {
             throw new AuthorisationError('Неправильные почта или пароль');
-          } const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key', { expiresIn: '7d' });
-          // res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send({
+          } const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });// res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send({
           res.send({
             name: user.name,
             about: user.about,
@@ -151,7 +150,13 @@ module.exports.getMe = (req, res, next) => {
         _id: user._id,
       });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Переданы некорректные данные.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 // catch((err) => {
