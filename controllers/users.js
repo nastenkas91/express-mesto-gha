@@ -32,7 +32,7 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFound(`Пользователь по указанному id не найден`));
+        next(new ValidationError(`Пользователь по указанному id не найден`));
       } next(err);
     });
 };
@@ -150,11 +150,12 @@ module.exports.getMe = (req, res, next) => {
       }
       return res.send({ user });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new NotFound(`Пользователь не найден`));
-      } next(err);
-    });
+    .catch(next);
 };
 
+// catch((err) => {
+//   if (err.name === 'CastError') {
+//     next(new NotFound(`Пользователь не найден`));
+//   } next(err);
+// });
 // message: `Переданы некорректные данные в полях: ${Object.keys(err.errors)}`
