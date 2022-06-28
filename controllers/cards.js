@@ -39,10 +39,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new NotFound(`Карточка по указанному id не найдена`);
       } else if (String(card.owner) !== req.user._id) {
         throw new Forbidden('Доступ ограничен');
-      } return Card.findByIdAndRemove(
-        cardId,
-        { new: true, runValidators: true },
-      )
+      } return Card.findByIdAndRemove({ cardId })
         .then((deletedCard) => res.send({ data: deletedCard }));
     })
     .catch(next);
@@ -85,7 +82,7 @@ module.exports.removeLike = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFound(`Карточка по указанному id не найдена`));
+        next(new ValidationError(`Карточка по указанному id не найдена`));
       } next(err);
     });
 };
