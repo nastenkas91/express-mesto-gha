@@ -27,14 +27,9 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return next(new NotFound(`Пользователь по указанному id не найден`));
-      }
-      return res.send({ user });
+      } return res.send({ data: user });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidationError(`Пользователь по указанному id не найден`));
-      } next(err);
-    });
+    .catch(next);
 };
 
 // Добавить нового пользователя
@@ -148,7 +143,13 @@ module.exports.getMe = (req, res, next) => {
       if (!user) {
         return next(new NotFound(`Пользователь по указанному id не найден`));
       }
-      return res.send({ user });
+      return res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch(next);
 };

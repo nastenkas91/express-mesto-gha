@@ -1,7 +1,7 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
@@ -25,6 +25,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
