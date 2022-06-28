@@ -8,15 +8,27 @@ router.get('/', getCards);
 
 router.post('/', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().regex(/^(https?:\/\/(www\.)?([a-zA-z0-9-]{1}[a-zA-z0-9-]*\.?)*\.{1}([a-zA-z0-9]){2,8}(\/?([a-zA-z0-9-])*\/?)*\/?([-._~:?#[]@!\$&'\(\)\*\+,;=])*)/),
   }),
 }), createCard);
 
-router.delete('/:cardId', deleteCard);
+router.delete('/:cardId', celebrate({
+  body: Joi.object().keys({
+    cardId: Joi.string().alphanum().length(24),
+  }),
+}), deleteCard);
 
-router.put('/:cardId/likes', addLike);
+router.put('/:cardId/likes', celebrate({
+  body: Joi.object().keys({
+    cardId: Joi.string().alphanum().length(24),
+  }),
+}), addLike);
 
-router.delete('/:cardId/likes', removeLike);
+router.delete('/:cardId/likes', celebrate({
+  body: Joi.object().keys({
+    cardId: Joi.string().alphanum().length(24),
+  }),
+}), removeLike);
 
 module.exports = router;

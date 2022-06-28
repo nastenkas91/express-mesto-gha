@@ -6,7 +6,11 @@ const {
 
 router.get('/', getUsers);
 
-router.get('/:userId', getUserById);
+router.get('/:userId', celebrate({
+  body: Joi.object().keys({
+    userId: Joi.string().alphanum().length(24),
+  }),
+}), getUserById);
 
 router.get('/me', getMe);
 
