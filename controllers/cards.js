@@ -33,7 +33,6 @@ module.exports.createCard = (req, res, next) => {
 // Удалить карточку
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  console.log(cardId);
   Card.findById(cardId)
     .then((card) => {
       if (!card) {

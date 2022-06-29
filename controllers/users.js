@@ -9,7 +9,7 @@ const ValidationError = require("../errors/ValidationError");
 
 const MONGO_DUPLICATE_ERROR_CODE = 11000;
 
-// const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 // Поиск всех пользователей
 module.exports.getUsers = (req, res, next) => {
@@ -123,14 +123,13 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (!matched) {
             throw new AuthorisationError('Неправильные почта или пароль');
-          } const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
-          res.send({
+          } const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key', { expiresIn: '7d' });
+          res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send({
             name: user.name,
             about: user.about,
             avatar: user.avatar,
             email: user.email,
             _id: user._id,
-            token,
           });
         });
     })
@@ -139,8 +138,6 @@ module.exports.login = (req, res, next) => {
 
 // получить текущего пользователя
 module.exports.getMe = (req, res, next) => {
-  console.log('ssss');
-  console.log(req.user._id);
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
@@ -161,12 +158,3 @@ module.exports.getMe = (req, res, next) => {
       next(err);
     });
 };
-
-// catch((err) => {
-//   if (err.name === 'CastError') {
-//     next(new NotFound(`Пользователь не найден`));
-//   } next(err);
-// });
-// message: `Переданы некорректные данные в полях: ${Object.keys(err.errors)}`
-
-// res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send()
