@@ -7,6 +7,8 @@ const AuthorisationError = require("../errors/AuthorisationError");
 const Conflict = require("../errors/Conflict");
 const ValidationError = require("../errors/ValidationError");
 
+const MONGO_DUPLICATE_ERROR_CODE = 11000;
+
 // const { NODE_ENV, JWT_SECRET } = process.env;
 
 // Поиск всех пользователей
@@ -37,13 +39,7 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new Conflict('Пользователь с данным email уже существует');
-      }
-      return bcrypt.hash(password, 10);
-    })
+  return bcrypt.hash(password, 10)
     .then((hash) => User.create(
       {
         name, about, avatar, email, password: hash,
@@ -57,7 +53,9 @@ module.exports.createUser = (req, res, next) => {
       _id: user._id,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
+        next(new Conflict('Пользователь с данным email уже существует'));
+      } if (err.name === 'ValidationError') {
         const errMessage = err.message.replace('user validation failed:', '');
         next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
       }
@@ -121,7 +119,7 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (!matched) {
             throw new AuthorisationError('Неправильные почта или пароль');
-          } const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });// res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send({
+          } const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
           res.send({
             name: user.name,
             about: user.about,
@@ -137,10 +135,12 @@ module.exports.login = (req, res, next) => {
 
 // получить текущего пользователя
 module.exports.getMe = (req, res, next) => {
+  console.log('ssss');
+  console.log(req.user._id);
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return next(new NotFound(`Пользователь по указанному id не найден`));
+        throw new NotFound(`Пользователь по указанному id не найден`);
       }
       return res.send({
         name: user.name,
@@ -153,9 +153,8 @@ module.exports.getMe = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidationError('Переданы некорректные данные.'));
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
@@ -165,3 +164,5 @@ module.exports.getMe = (req, res, next) => {
 //   } next(err);
 // });
 // message: `Переданы некорректные данные в полях: ${Object.keys(err.errors)}`
+
+// res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send()

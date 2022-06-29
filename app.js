@@ -42,19 +42,17 @@ app.use("*", (req, res, next) => {
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  // const { statusCode = 500, message } = err;
+  const { statusCode = 500, message } = err;
   res
     .status(err.statusCode)
-    .send({ err });
+    .send({
+      message: statusCode === 500
+        ? 'Произошла ошибка на сервере'
+        : message,
+    });
   next();
 });
 
 app.listen(PORT, () => {
   console.log('Сервер запущен');
 });
-
-// send({
-//   message: statusCode === 500
-//     ? 'Произошла ошибка на сервере'
-//     : message,
-// });
