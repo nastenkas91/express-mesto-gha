@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require("./controllers/users");
 const auth = require("./middlewares/auth");
+const routerUsers = require('./routes/users');
+const routerCards = require('./routes/cards');
 const NotFound = require("./errors/NotFound");
 
 const { PORT = 3000 } = process.env;
@@ -32,8 +34,8 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }), login);
-app.use("/users", auth, require('./routes/users'));
-app.use("/cards", auth, require('./routes/cards'));
+app.use("/users", auth, routerUsers);
+app.use("/cards", auth, routerCards);
 
 app.use("*", (req, res, next) => {
   next(new NotFound(`Страница не найдена`));

@@ -33,16 +33,21 @@ module.exports.createCard = (req, res, next) => {
 // Удалить карточку
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findById({ cardId })
+  console.log(cardId);
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         throw new NotFound(`Карточка по указанному id не найдена`);
       } else if (String(card.owner) !== req.user._id) {
         throw new Forbidden('Доступ ограничен');
-      } return Card.findByIdAndRemove({ cardId })
+      } return Card.findByIdAndRemove(cardId)
         .then((deletedCard) => res.send({ data: deletedCard }));
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError(`Карточка по указанному id не найдена`));
+      } next(err);
+    });
 };
 
 // Поставить лайк
@@ -55,13 +60,13 @@ module.exports.addLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        return next(new NotFound(`Карточка по указанному id не найдена`));
+        throw new NotFound(`Карточка по указанному id не найдена`);
       }
       return res.send({ card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFound(`Карточка по указанному id не найдена`));
+        next(new ValidationError(`Карточка не найдена`));
       } next(err);
     });
 };
@@ -76,7 +81,7 @@ module.exports.removeLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        return next(new NotFound(`Карточка по указанному id не найдена`));
+        throw new NotFound(`Карточка по указанному id не найдена`);
       }
       return res.send({ card });
     })
