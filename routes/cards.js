@@ -14,19 +14,19 @@ router.post('/', celebrate({
 router.get('/', getCards);
 
 router.delete('/:cardId', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     cardId: Joi.string().hex().length(24),
   }),
 }), deleteCard);
 
 router.put('/:cardId/likes', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     cardId: Joi.string().hex().length(24),
   }),
 }), addLike);
 
 router.delete('/:cardId/likes', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     cardId: Joi.string().hex().length(24),
   }),
 }), removeLike);

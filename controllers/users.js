@@ -29,11 +29,11 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => {
       if (!user) {
         return next(new NotFound(`Пользователь по указанному id не найден`));
-      }  return res.send({ data: user });
+      } return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFound(`Пользователь не найден`));
+        next(new ValidationError(`Пользователь не найден`));
       } next(err);
     });
 };
