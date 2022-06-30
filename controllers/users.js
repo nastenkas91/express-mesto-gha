@@ -1,11 +1,10 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-require('dotenv').config();
-const User = require("../models/user");
-const NotFound = require("../errors/NotFound");
-const AuthorisationError = require("../errors/AuthorisationError");
-const Conflict = require("../errors/Conflict");
-const ValidationError = require("../errors/ValidationError");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const NotFound = require('../errors/NotFound');
+const AuthorisationError = require('../errors/AuthorisationError');
+const Conflict = require('../errors/Conflict');
+const ValidationError = require('../errors/ValidationError');
 
 const MONGO_DUPLICATE_ERROR_CODE = 11000;
 
@@ -28,13 +27,15 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return next(new NotFound(`Пользователь по указанному id не найден`));
-      } return res.send({ data: user });
+        return next(new NotFound('Пользователь по указанному id не найден'));
+      }
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError(`Пользователь не найден`));
-      } next(err);
+        return next(new ValidationError('Пользователь не найден'));
+      }
+      return next(err);
     });
 };
 
@@ -58,12 +59,12 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_ERROR_CODE) {
-        next(new Conflict('Пользователь с данным email уже существует'));
+        return next(new Conflict('Пользователь с данным email уже существует'));
       } if (err.name === 'ValidationError') {
         const errMessage = err.message.replace('user validation failed:', '');
-        next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
+        return next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -77,16 +78,16 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        return next(new NotFound(`Пользователь по указанному id не найден`));
+        return next(new NotFound('Пользователь по указанному id не найден'));
       }
       return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const errMessage = err.message.replace('user validation failed:', '');
-        next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
+        return next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -100,15 +101,15 @@ module.exports.updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        return next(new NotFound(`Пользователь по указанному id не найден`));
+        return next(new NotFound('Пользователь по указанному id не найден'));
       }
       return res.send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('введен некорректный URL'));
+        return next(new ValidationError('введен некорректный URL'));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -119,12 +120,14 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new AuthorisationError('Неправильные почта или пароль');
-      } return bcrypt.compare(password, user.password)
+      }
+      return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
             throw new AuthorisationError('Неправильные почта или пароль');
-          } const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key', { expiresIn: '7d' });
-          res.cookie('jwt', token, { maxAge: 3600000 * 7, httpOnly: true, sameSite: true }).send({
+          }
+          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key', { expiresIn: '7d' });
+          res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true }).send({
             name: user.name,
             about: user.about,
             avatar: user.avatar,
@@ -141,7 +144,7 @@ module.exports.getMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFound(`Пользователь по указанному id не найден`);
+        throw new NotFound('Пользователь по указанному id не найден');
       }
       return res.send({
         name: user.name,
@@ -153,8 +156,8 @@ module.exports.getMe = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Переданы некорректные данные.'));
+        return next(new ValidationError('Переданы некорректные данные.'));
       }
-      next(err);
+      return next(err);
     });
 };

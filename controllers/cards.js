@@ -1,7 +1,7 @@
-const Card = require("../models/card");
-const NotFound = require("../errors/NotFound");
-const Forbidden = require("../errors/Forbidden");
-const ValidationError = require("../errors/ValidationError");
+const Card = require('../models/card');
+const NotFound = require('../errors/NotFound');
+const Forbidden = require('../errors/Forbidden');
+const ValidationError = require('../errors/ValidationError');
 
 // Поиск всех карточек
 module.exports.getCards = (req, res, next) => {
@@ -24,9 +24,9 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         const errMessage = err.message.replace('user validation failed:', '');
-        next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
+        return next(new ValidationError(`Переданы некорректные данные в полях:${errMessage}`));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -36,16 +36,18 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFound(`Карточка по указанному id не найдена`);
+        throw new NotFound('Карточка по указанному id не найдена');
       } else if (String(card.owner) !== req.user._id) {
         throw new Forbidden('Доступ ограничен');
-      } return Card.findByIdAndRemove(cardId)
+      }
+      return Card.findByIdAndRemove(cardId)
         .then((deletedCard) => res.send({ data: deletedCard }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError(`Карточка по указанному id не найдена`));
-      } next(err);
+        return next(new ValidationError('Карточка по указанному id не найдена'));
+      }
+      return next(err);
     });
 };
 
@@ -59,14 +61,15 @@ module.exports.addLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound(`Карточка по указанному id не найдена`);
+        throw new NotFound('Карточка по указанному id не найдена');
       }
       return res.send({ card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError(`Карточка не найдена`));
-      } next(err);
+        return next(new ValidationError('Карточка не найдена'));
+      }
+      return next(err);
     });
 };
 
@@ -80,13 +83,14 @@ module.exports.removeLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFound(`Карточка по указанному id не найдена`);
+        throw new NotFound('Карточка по указанному id не найдена');
       }
       return res.send({ card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError(`Карточка по указанному id не найдена`));
-      } next(err);
+        return next(new ValidationError('Карточка по указанному id не найдена'));
+      }
+      return next(err);
     });
 };
