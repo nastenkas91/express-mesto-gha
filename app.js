@@ -7,7 +7,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const routerUsers = require('./routes/users');
-const { routerCards } = require('./routes/cards');
+const routerCards = require('./routes/cards');
 const NotFound = require('./errors/NotFound');
 const errorHandler = require('./middlewares/errorHandler');
 

@@ -4,12 +4,12 @@ const {
   getCards, createCard, deleteCard, addLike, removeLike,
 } = require('../controllers/cards');
 
-const URL_REGEX = /^(https?:\/\/(www\.)?([a-zA-z0-9-]{1}[a-zA-z0-9-]*\.?)*\.{1}([a-zA-z0-9]){2,8}(\/?([a-zA-z0-9-])*\/?)*\/?([-._~:?#[]@!\$&'\(\)\*\+,;=])*)/;
+const URL_REGEX = require('../utils/constants');
 
 routerCards.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().regex(URL_REGEX),
+    link: Joi.string().required().pattern(URL_REGEX),
   }),
 }), createCard);
 
@@ -33,4 +33,4 @@ routerCards.delete('/:cardId/likes', celebrate({
   }),
 }), removeLike);
 
-module.exports = { routerCards, URL_REGEX };
+module.exports = routerCards;

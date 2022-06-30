@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { URL_REGEX } = require('../routes/cards');
+const URL_REGEX = require('../utils/constants');
 
 const cardSchema = new mongoose.Schema({
   name: {
