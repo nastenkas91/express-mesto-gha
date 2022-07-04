@@ -10,6 +10,9 @@ const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
 const NotFound = require('./errors/NotFound');
 const errorHandler = require('./middlewares/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
+const { DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,6 +22,26 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  const requestHeaders = req.headers['access-control-request-headers'];
+  res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    return res.end();
+  }
+  return next();
+});
+
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -42,6 +65,8 @@ app.use('/cards', auth, routerCards);
 app.use('*', (req, res, next) => {
   next(new NotFound('Страница не найдена'));
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
