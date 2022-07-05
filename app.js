@@ -23,15 +23,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-  if (req.method === 'OPTIONS') {
-    return res.send(200);
-  }
-  return next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', '*');
+//   res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+//   if (req.method === 'OPTIONS') {
+//     return res.send(200);
+//   }
+//   return next();
+// });
 
 app.use(requestLogger);
 
