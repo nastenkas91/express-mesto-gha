@@ -29,6 +29,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.header('Access-Control-Allow-Headers', '*');
   res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+  res.header('Access-Control-Allow-Credentials', 'true');
   if (req.method === 'OPTIONS') {
     return res.send(200);
   }
