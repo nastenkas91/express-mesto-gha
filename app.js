@@ -27,7 +27,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Headers', 'Accept, Content-Type');
   res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
   res.header('Access-Control-Allow-Credentials', 'true');
   if (req.method === 'OPTIONS') {
