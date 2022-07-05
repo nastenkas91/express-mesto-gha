@@ -5,12 +5,12 @@ const ALLOWED_ORIGIN = [
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
 const cors = (req, res, next) => {
-  const { origin } = req.headers;
+  const { Referer } = req.headers;
   const { method } = req;
   const requestHeaders = req.headers['access-control-request-headers'];
 
-  if (ALLOWED_ORIGIN.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+  if (ALLOWED_ORIGIN.includes(Referer)) {
+    res.header('Access-Control-Allow-Origin', Referer);
   }
 
   if (method === 'OPTIONS') {
