@@ -14,6 +14,8 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { URL_REGEX, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
+const ALLOWED_ORIGIN = 'http://localhost:3000, https://mesto-project.nomoredomains.sbs, https://mesto-project.nomoredomains.sbs';
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -24,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
   res.header('Access-Control-Allow-Headers', '*');
   res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
   if (req.method === 'OPTIONS') {
