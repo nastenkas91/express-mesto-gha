@@ -103,7 +103,7 @@ module.exports.updateAvatar = (req, res, next) => {
       if (!user) {
         return next(new NotFound('Пользователь по указанному id не найден'));
       }
-      return res.send({ user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
