@@ -11,10 +11,9 @@ const routerCards = require('./routes/cards');
 const NotFound = require('./errors/NotFound');
 const errorHandler = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors');
 
-const { URL_REGEX, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
-
-// const ALLOWED_ORIGIN = 'http://localhost:3000, https://mesto-project.nomoredomains.sbs, https://mesto-project.nomoredomains.sbs';
+const URL_REGEX = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -25,15 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'mesto-project.nomoredomains.sbs');
-  res.header('Access-Control-Allow-Headers', 'Origin, Accept, Content-Type, Authorization');
-  res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-  if (req.method === 'OPTIONS') {
-    return res.send(200);
-  }
-  return next();
-});
+app.use(cors);
 
 app.use(requestLogger);
 
