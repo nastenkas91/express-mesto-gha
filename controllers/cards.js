@@ -10,7 +10,7 @@ module.exports.getCards = (req, res, next) => {
       if (!cards) {
         return next(new NotFound('Пользователи не найдены'));
       }
-      return res.send({ data: cards });
+      return res.send(cards);
     });
 };
 
