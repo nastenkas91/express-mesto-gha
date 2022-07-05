@@ -63,7 +63,7 @@ module.exports.addLike = (req, res, next) => {
       if (!card) {
         throw new NotFound('Карточка по указанному id не найдена');
       }
-      return res.send({ card });
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -85,7 +85,7 @@ module.exports.removeLike = (req, res, next) => {
       if (!card) {
         throw new NotFound('Карточка по указанному id не найдена');
       }
-      return res.send({ card });
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
