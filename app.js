@@ -12,7 +12,7 @@ const NotFound = require('./errors/NotFound');
 const errorHandler = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
+const { URL_REGEX, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -47,7 +47,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/^(https?:\/\/(www\.)?([a-zA-z0-9-]){1,}\.?([a-zA-z0-9]){2,8}(\/?([a-zA-z0-9-])*\/?)*\/?([-._~:/?#[]@!\$&'\(\)\*\+,;=])*)/),
+    avatar: Joi.string().pattern(URL_REGEX),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
