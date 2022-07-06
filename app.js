@@ -1,7 +1,4 @@
 require('dotenv').config();
-
-console.log(process.env);
-
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
@@ -65,6 +62,9 @@ app.use(errorLogger);
 app.use(errors());
 
 app.use(errorHandler);
+
+console.log(process.env);
+console.log('process.env');
 
 app.listen(PORT, () => {
   console.log('Сервер запущен');
