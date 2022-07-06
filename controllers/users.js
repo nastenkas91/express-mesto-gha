@@ -139,7 +139,7 @@ module.exports.login = (req, res, next) => {
 module.exports.getMe = (req, res, next) => {
   console.log(process.env);
   console.log('process.env');
-  
+
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
