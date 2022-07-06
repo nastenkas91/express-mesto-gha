@@ -3,17 +3,12 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 const helmet = require('helmet');
 const routes = require('./routes/index');
 const cors = require('./middlewares/cors');
-const { login, createUser } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const NotFound = require('./errors/NotFound');
 const errorHandler = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-const URL_REGEX = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
