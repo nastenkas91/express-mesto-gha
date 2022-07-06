@@ -63,9 +63,6 @@ app.use(errors());
 
 app.use(errorHandler);
 
-console.log(process.env);
-console.log('process.env');
-
 app.listen(PORT, () => {
   console.log('Сервер запущен');
 });
