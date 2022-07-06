@@ -1,7 +1,4 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
-console.log('fffff');
-console.log(require('dotenv').config());
+require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
