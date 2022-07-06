@@ -35,3 +35,5 @@ router.use('/cards', auth, routerCards);
 router.use('*', (req, res, next) => {
   next(new NotFound('Страница не найдена'));
 });
+
+module.exports = router;
