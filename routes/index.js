@@ -1,4 +1,4 @@
-const router = require('express').Router;
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const routerUsers = require('./users');
 const routerCards = require('./cards');
